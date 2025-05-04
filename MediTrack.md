@@ -4,7 +4,7 @@
 # **MediTrack (Sistem Manajemen Klinik)**
 
 <div align="center">
-   <img src="Logo%20Unsulbar.png" width="150">
+   <img src="Logo%20Unsulbar.png" width="250">
 </div>
 
 ### **Nama:** Hasnur
