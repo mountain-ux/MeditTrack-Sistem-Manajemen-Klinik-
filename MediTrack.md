@@ -4,7 +4,7 @@
 # **MediTrack (Sistem Manajemen Klinik)**
 
 [![Logo Unsulbar.png](public/assets/Logo%20Unsulbar.png)
-](https://github.com/mountain-ux/MeditTrack-Sistem-Manajemen-Klinik-/blob/main/Logo%20Unsulbar.png)
+
 ### **Nama:** Hasnur
 ### **NIM:** D0223509
 
