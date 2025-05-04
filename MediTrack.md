@@ -3,7 +3,9 @@
 
 # **MediTrack (Sistem Manajemen Klinik)**
 
-![Logo Unsulbar](Logo%20Unsulbar.png)
+<div align="center">
+   <img src="Logo%20Unsulbar.png" width="150">
+</div>
 
 ### **Nama:** Hasnur
 ### **NIM:** D0223509
