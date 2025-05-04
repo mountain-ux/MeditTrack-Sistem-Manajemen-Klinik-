@@ -116,4 +116,21 @@ Berikut adalah tabel-tabel utama beserta field dan tipe datanya:
 | created_at  | Timestamp   | Waktu dibuat       |
 | updated_at  | Timestamp   | Waktu diperbarui   |
 
-Kamu bisa menyimpan file ini dengan nama `proyek.md`. Kalau ada tambahan atau perubahan, beri tahu saya! 🚀
+### **🛠 Hubungan Antar Tabel**
+
+1. **pengguna** memiliki hubungan **One-to-Many** dengan tabel **pasien** dan **dokter**.  
+   - `id_pengguna` di tabel **pasien** dan **dokter** merujuk ke `id` di tabel **pengguna**.
+   
+2. **dokter** dan **pasien** memiliki hubungan **Many-to-Many** melalui tabel **jadwal_konsultasi**.  
+   - `id_dokter` dan `id_pasien` di tabel **jadwal_konsultasi** masing-masing merujuk ke `id` di tabel **dokter** dan **pasien**.
+   
+3. **jadwal_konsultasi** memiliki hubungan **One-to-One** dengan tabel **resep_obat**.  
+   - `id_jadwal_konsultasi` di tabel **resep_obat** merujuk ke `id` di tabel **jadwal_konsultasi**.
+   
+4. **resep_obat** memiliki hubungan **One-to-Many** dengan tabel **obat**.  
+   - `detail_obat` di tabel **resep_obat** mencantumkan daftar obat yang diresepkan oleh dokter.
+   
+5. **pasien** memiliki hubungan **Many-to-Many** dengan **obat** melalui tabel **transaksi**.  
+   - `id_pasien` dan `id_obat` di tabel **transaksi** merujuk ke tabel **pasien** dan **obat**, memungkinkan pembelian obat oleh pasien.
+
+
