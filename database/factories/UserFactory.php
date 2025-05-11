@@ -11,9 +11,14 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
+      protected $model = [
+            \App\Models\Pasien::class => \Database\Factories\PasienFactory::class,
+            \App\Models\Dokter::class => \Database\Factories\DokterFactory::class,
+            \App\Models\JadwalKonsultasi::class => \Database\Factories\JadwalKonsultasiFactory::class,
+            \App\Models\Obat::class => \Database\Factories\ObatFactory::class,
+            \App\Models\Transaksi::class => \Database\Factories\TransaksiFactory::class,
+            \App\Models\ResepObat::class => \Database\Factories\ResepObatFactory::class,
+        ];
     protected static ?string $password;
 
     /**
