@@ -12,14 +12,14 @@ Route::get('/', function () {
     return redirect()->route('auth.login');
 });
 
-// 🛡 Route Autentikasi
+//Route Autentikasi
 Route::get('/login', [AuthController::class, 'showLogin'])->name('auth.login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('auth.register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
-// 📌 Route Dashboard berdasarkan peran
+// Route Dashboard berdasarkan peran
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/admin', [DashboardController::class, 'admin'])->middleware('role:Admin')->name('dashboard.admin');
@@ -27,7 +27,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pasien', [DashboardController::class, 'pasien'])->middleware('role:Pasien')->name('dashboard.pasien');
 });
 
-// 🏥 Route Pengguna (Admin saja)
+//Route Pengguna (Admin saja)
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
     Route::get('/pengguna/create', [PenggunaController::class, 'create'])->name('pengguna.create');
@@ -37,7 +37,7 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.delete');
 });
 
-// 🩺 Route Konsultasi (Dokter & Pasien)
+//Route Konsultasi (Dokter & Pasien)
 Route::middleware(['auth'])->group(function () {
     Route::get('/konsultasi', [KonsultasiController::class, 'index'])->name('konsultasi.index');
     Route::get('/konsultasi/create', [KonsultasiController::class, 'create'])->middleware('role:Pasien')->name('konsultasi.create');
@@ -46,7 +46,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/konsultasi/{id}', [KonsultasiController::class, 'update'])->middleware('role:Dokter')->name('konsultasi.update');
 });
 
-// 💊 Route Obat (Hanya Admin)
+//Route Obat (Hanya Admin)
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/obat', [ObatController::class, 'index'])->name('obat.index');
     Route::get('/obat/tambah', [ObatController::class, 'create'])->name('obat.create');
@@ -56,7 +56,7 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::delete('/obat/{id}', [ObatController::class, 'destroy'])->name('obat.delete');
 });
 
-// 💉 Route Resep (Hanya Dokter)
+// Route Resep (Hanya Dokter)
 Route::middleware(['auth', 'role:Dokter'])->group(function () {
     Route::get('/resep', [ResepController::class, 'index'])->name('resep.index');
     Route::get('/resep/tambah', [ResepController::class, 'create'])->name('resep.create');
@@ -65,7 +65,7 @@ Route::middleware(['auth', 'role:Dokter'])->group(function () {
     Route::put('/resep/{id}', [ResepController::class, 'update'])->name('resep.update');
 });
 
-// 👨‍⚕️ Manajemen Dokter
+// Manajemen Dokter
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::post('/dokter', [DashboardController::class, 'storeDokter'])->name('dokter.store');
     Route::delete('/dokter/{id}', [DashboardController::class, 'destroyDokter'])->name('dokter.hapus');

@@ -14,14 +14,14 @@ class JadwalKonsultasi extends Model
         'id_pasien', 'id_dokter', 'tanggal_konsultasi', 'status'
     ];
 
-  public function pasien()
-  {
-      return $this->belongsTo(Pasien::class, 'id_pasien');
-  }
-
   public function dokter()
   {
-      return $this->belongsTo(Dokter::class, 'id_dokter');
+      return $this->belongsTo(Pengguna::class, 'id_dokter');
+  }
+
+  public function pasien()
+  {
+      return $this->belongsTo(Pengguna::class, 'id_pasien');
   }
 
 }

@@ -10,21 +10,18 @@ use App\Models\JadwalKonsultasi;
 
 class DashboardController extends Controller
 {
-    // Menentukan dashboard berdasarkan peran
     public function index()
     {
         $pengguna = Auth::user();
 
-        if ($pengguna->peran === 'Admin') {
-            return $this->admin();
-        } elseif ($pengguna->peran === 'Dokter') {
-            return $this->dokter();
-        } else {
-            return $this->pasien();
-        }
+        return match ($pengguna->peran) {
+            'Admin' => $this->admin(),
+            'Dokter' => $this->dokter(),
+            default => $this->pasien(),
+        };
     }
 
-    // Dashboard Admin
+    // === Admin Dashboard ===
     public function admin()
     {
         $totalPengguna = Pengguna::count();
@@ -34,42 +31,56 @@ class DashboardController extends Controller
 
         return view('dashboard.admin', compact('totalPengguna', 'totalDokter', 'totalKonsultasi', 'pengguna'));
     }
-    public function pasien()
-    {
-        return view('dashboard.pasien');
-    }
 
-
-    // Menambahkan dokter dari dashboard admin
     public function storeDokter(Request $request)
     {
         $request->validate([
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:pengguna',
-            'password' => 'required|min:6'
+            'password' => 'required|min:6',
         ]);
 
         Pengguna::create([
             'nama' => $request->nama,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'peran' => 'Dokter'
+            'peran' => 'Dokter',
         ]);
 
         return redirect()->route('dashboard.admin')->with('success', 'Dokter berhasil ditambahkan!');
     }
-    public function dokter()
-    {
-        return view('dashboard.dokter');
-    }
 
-
-    // Hapus dokter dari dashboard admin
     public function destroyDokter($id)
     {
         $dokter = Pengguna::findOrFail($id);
         $dokter->delete();
 
         return redirect()->route('dashboard.admin')->with('success', 'Dokter berhasil dihapus!');
+    }
+
+    // === Dokter Dashboard ===
+    public function dokter()
+    {
+        $dokterId = Auth::id();
+
+        $jadwalKonsultasi = JadwalKonsultasi::with('pasien') // relasi pasien harus ada
+            ->where('id_dokter', $dokterId)
+            ->orderBy('tanggal_konsultasi', 'desc')
+            ->get();
+
+        return view('dashboard.dokter', compact('jadwalKonsultasi'));
+    }
+
+    // === Pasien Dashboard ===
+    public function pasien()
+    {
+        $pasienId = Auth::id();
+
+        $konsultasi = JadwalKonsultasi::with('dokter')
+            ->where('id_pasien', $pasienId)
+            ->orderBy('tanggal_konsultasi', 'desc')
+            ->get();
+
+        return view('dashboard.pasien', compact('konsultasi'));
     }
 }
