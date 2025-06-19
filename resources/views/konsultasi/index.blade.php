@@ -1,38 +1,58 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Konsultasi')
+@section('title', 'Data Konsultasi')
 
 @section('content')
-<div class="container">
-    <h2>Jadwal Konsultasi</h2>
+<h2 class="mb-4 fw-semibold">Data Konsultasi</h2>
 
-    @if(Auth::user()->peran === 'Pasien')
-        <a href="{{ route('konsultasi.create') }}" class="btn btn-success mb-3">Buat Konsultasi Baru</a>
-    @endif
+@if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+@endif
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Dokter</th>
-                <th>Pasien</th>
-                <th>Tanggal</th>
-                <th>Status</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($konsultasi as $k)
-            <tr>
-                <td>{{ $k->dokter->nama }}</td>
-                <td>{{ $k->pasien->nama }}</td>
-                <td>{{ $k->tanggal }}</td>
-                <td>{{ $k->status }}</td>
-                <td>
-                    <a href="{{ route('konsultasi.detail', $k->id) }}" class="btn btn-info">Detail</a>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+<div class="card shadow-sm">
+    <div class="card-body table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Pasien</th>
+                    <th>Dokter</th>
+                    <th>Tanggal</th>
+                    <th>Status</th>
+                    <th style="width: 120px;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($konsultasi as $item)
+                <tr>
+                    <td>{{ $item->pasien->nama ?? '-' }}</td>
+                    <td>{{ $item->dokter->nama ?? '-' }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->tanggal_konsultasi)->translatedFormat('d F Y, H:i') }}</td>
+                    <td>
+                        @switch($item->status)
+                            @case('Dijadwalkan')
+                                <span class="badge bg-warning text-dark">Dijadwalkan</span>
+                                @break
+                            @case('Dikonfirmasi')
+                                <span class="badge bg-info text-dark">Dikonfirmasi</span>
+                                @break
+                            @case('Selesai')
+                                <span class="badge bg-success">Selesai</span>
+                                @break
+                            @default
+                                <span class="badge bg-secondary">Menunggu</span>
+                        @endswitch
+                    </td>
+                    <td>
+                        <a href="{{ route('konsultasi.detail', $item->id) }}" class="btn btn-sm btn-primary">Detail</a>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5" class="text-center">Belum ada data konsultasi.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
 @endsection

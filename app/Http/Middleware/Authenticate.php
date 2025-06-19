@@ -17,10 +17,10 @@ class Authenticate
      */
     public function handle(Request $request, Closure $next)
     {
-              if (!Auth::check()) {
-                  return redirect()->route('auth.login')->with('error', 'Silakan login terlebih dahulu.');
-              }
+        if (!Auth::check()) {
+            return redirect()->route('auth.login')->with('error', 'Silakan login terlebih dahulu.');
+        }
 
-              return $next($request);
-          }
+        return $next($request);
+    }
 }

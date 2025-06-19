@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\ResepObat;
 use App\Models\JadwalKonsultasi;
 use App\Models\Pengguna;
+use App\Models\Obat;
 use Illuminate\Support\Facades\Auth;
 
 class ResepController extends Controller
@@ -27,8 +28,9 @@ class ResepController extends Controller
     {
         $pasien = Pengguna::where('peran', 'Pasien')->get();
         $jadwal = JadwalKonsultasi::where('id_dokter', Auth::id())->where('status', 'Selesai')->get();
+        $obat = Obat::all();
 
-        return view('resep.create', compact('pasien', 'jadwal'));
+        return view('resep.create', compact('pasien', 'jadwal','obat'));
     }
 
     // Menyimpan resep obat baru

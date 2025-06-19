@@ -7,19 +7,18 @@ use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\KonsultasiController;
 use App\Http\Controllers\ObatController;
 use App\Http\Controllers\ResepController;
+use App\Http\Controllers\TransaksiController;
 
-Route::get('/', function () {
-    return redirect()->route('auth.login');
-});
+Route::get('/', fn() => redirect()->route('auth.login'));
 
-//Route Autentikasi
+// Autentikasi
 Route::get('/login', [AuthController::class, 'showLogin'])->name('auth.login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('auth.register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
-// Route Dashboard berdasarkan peran
+// Dashboard Berdasarkan Peran
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/admin', [DashboardController::class, 'admin'])->middleware('role:Admin')->name('dashboard.admin');
@@ -27,55 +26,46 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pasien', [DashboardController::class, 'pasien'])->middleware('role:Pasien')->name('dashboard.pasien');
 });
 
-//Route Pengguna (Admin saja)
+// Pengguna (Admin Only)
 Route::middleware(['auth', 'role:Admin'])->group(function () {
-    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
-    Route::get('/pengguna/create', [PenggunaController::class, 'create'])->name('pengguna.create');
-    Route::post('/pengguna', [PenggunaController::class, 'store'])->name('pengguna.store');
-    Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
-    Route::put('/pengguna/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
-    Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.delete');
+    Route::resource('pengguna', PenggunaController::class)->except(['show']);
 });
 
-//Route Konsultasi (Dokter & Pasien)
 Route::middleware(['auth'])->group(function () {
+    // Lihat semua konsultasi
     Route::get('/konsultasi', [KonsultasiController::class, 'index'])->name('konsultasi.index');
-    Route::get('/konsultasi/create', [KonsultasiController::class, 'create'])->middleware('role:Pasien')->name('konsultasi.create');
-    Route::post('/konsultasi', [KonsultasiController::class, 'store'])->middleware('role:Pasien')->name('konsultasi.store');
     Route::get('/konsultasi/{id}', [KonsultasiController::class, 'show'])->name('konsultasi.detail');
-    Route::put('/konsultasi/{id}', [KonsultasiController::class, 'update'])->middleware('role:Dokter')->name('konsultasi.update');
+
+    // Tambah konsultasi – hanya untuk Pasien
+    Route::middleware('role:Pasien')->group(function () {
+        Route::get('/konsultasi/create', [KonsultasiController::class, 'create'])->name('konsultasi.create');
+        R oute::post('/konsultasi', [KonsultasiController::class, 'store'])->name('konsultasi.store');
+    });
+
+    // Update status konsultasi – hanya untuk Dokter
+    Route::middleware('role:Dokter')->group(function () {
+        Route::put('/konsultasi/{id}', [KonsultasiController::class, 'update'])->name('konsultasi.update');
+        Route::post('/konsultasi/{id}/selesai', [KonsultasiController::class, 'selesaikan'])->name('konsultasi.selesai');
+    });
 });
 
-//Route Obat (Hanya Admin)
+// Obat (Admin Only)
 Route::middleware(['auth', 'role:Admin'])->group(function () {
-    Route::get('/obat', [ObatController::class, 'index'])->name('obat.index');
-    Route::get('/obat/tambah', [ObatController::class, 'create'])->name('obat.create');
-    Route::post('/obat', [ObatController::class, 'store'])->name('obat.store');
-    Route::get('/obat/{id}/edit', [ObatController::class, 'edit'])->name('obat.edit');
-    Route::put('/obat/{id}', [ObatController::class, 'update'])->name('obat.update');
-    Route::delete('/obat/{id}', [ObatController::class, 'destroy'])->name('obat.delete');
+    Route::resource('obat', ObatController::class)->except(['show']);
 });
 
-// Route Resep (Hanya Dokter)
+// Resep (Dokter Only)
 Route::middleware(['auth', 'role:Dokter'])->group(function () {
-    Route::get('/resep', [ResepController::class, 'index'])->name('resep.index');
-    Route::get('/resep/tambah', [ResepController::class, 'create'])->name('resep.create');
-    Route::post('/resep', [ResepController::class, 'store'])->name('resep.store');
-    Route::get('/resep/{id}/edit', [ResepController::class, 'edit'])->name('resep.edit');
-    Route::put('/resep/{id}', [ResepController::class, 'update'])->name('resep.update');
+    Route::resource('resep', ResepController::class)->except(['show', 'destroy']);
 });
 
-// Manajemen Dokter
+// Manajemen Dokter via Dashboard
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::post('/dokter', [DashboardController::class, 'storeDokter'])->name('dokter.store');
     Route::delete('/dokter/{id}', [DashboardController::class, 'destroyDokter'])->name('dokter.hapus');
 });
 
-use App\Http\Controllers\TransaksiController;
-
-// Middleware untuk transaksi (hanya pasien yang bisa membeli obat)
+// Transaksi (Pasien Only)
 Route::middleware(['auth', 'role:Pasien'])->group(function () {
-    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
-    Route::get('/transaksi/tambah', [TransaksiController::class, 'create'])->name('transaksi.create');
-    Route::post('/transaksi', [TransaksiController::class, 'store'])->name('transaksi.store');
+    Route::resource('transaksi', TransaksiController::class)->only(['index', 'create', 'store']);
 });

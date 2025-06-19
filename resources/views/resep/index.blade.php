@@ -1,34 +1,40 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Resep Obat')
+@section('title', 'Data Resep Obat')
 
 @section('content')
-<div class="container">
-    <h2>Daftar Resep Obat</h2>
+<h2 class="mb-4 fw-semibold">Data Resep Obat</h2>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Pasien</th>
-                <th>Dokter</th>
-                <th>Detail Obat</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($resep as $r)
-            <tr>
-                <td>{{ $r->pasien->nama }}</td>
-                <td>{{ $r->dokter->nama }}</td>
-                <td>{{ $r->detail_obat }}</td>
-                <td>
-                    @if(Auth::user()->peran === 'Dokter')
-                        <a href="{{ route('resep.edit', $r->id) }}" class="btn btn-warning">Ubah</a>
-                    @endif
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+<a href="{{ route('resep.create') }}" class="btn btn-success mb-3">+ Buat Resep</a>
+
+<div class="card shadow-sm">
+    <div class="card-body table-responsive">
+        <table class="table table-bordered align-middle table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Pasien</th>
+                    <th>Obat</th>
+                    <th>Jumlah</th>
+                    <th>Keterangan</th>
+                    <th style="width: 120px;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($resep as $item)
+                <tr>
+                    <td>{{ $item->pasien->nama ?? '-' }}</td>
+                    <td>{{ $item->obat->nama ?? '-' }}</td>
+                    <td>{{ $item->jumlah }}</td>
+                    <td>{{ $item->keterangan }}</td>
+                    <td>
+                        <a href="{{ route('resep.edit', $item->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="5" class="text-center">Belum ada resep.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
 @endsection

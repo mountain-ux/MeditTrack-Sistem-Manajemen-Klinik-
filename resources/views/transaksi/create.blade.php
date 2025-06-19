@@ -1,37 +1,30 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Transaksi')
+@section('title', 'Buat Transaksi')
 
 @section('content')
-<div class="container">
-    <h2>Tambah Transaksi</h2>
-    <form action="{{ route('transaksi.store') }}" method="POST">
-        @csrf
-        <div class="mb-3">
-            <label for="id_obat" class="form-label">Pilih Obat</label>
-            <select name="id_obat" id="id_obat" class="form-select">
-                @foreach ($obat as $o)
-                    <option value="{{ $o->id }}" data-harga="{{ $o->harga }}">{{ $o->nama }} - Rp {{ number_format($o->harga, 0, ',', '.') }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="jumlah" class="form-label">Jumlah</label>
-            <input type="number" name="jumlah" id="jumlah" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label for="total_harga" class="form-label">Total Harga</label>
-            <input type="text" name="total_harga" id="total_harga" class="form-control" readonly>
-        </div>
-        <button type="submit" class="btn btn-success">Simpan</button>
-    </form>
-</div>
+<h2 class="mb-4 fw-semibold">Buat Transaksi Obat</h2>
 
-<script>
-    document.getElementById('jumlah').addEventListener('input', function() {
-        var jumlah = this.value;
-        var hargaObat = document.getElementById('id_obat').selectedOptions[0].getAttribute('data-harga');
-        document.getElementById('total_harga').value = jumlah * hargaObat;
-    });
-</script>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form action="{{ route('transaksi.store') }}" method="POST">
+            @csrf
+            <div class="mb-3">
+                <label class="form-label">Obat</label>
+                <select name="obat_id" class="form-select" required>
+                    <option value="">-- Pilih Obat --</option>
+                    @foreach ($obat as $o)
+                        <option value="{{ $o->id }}">{{ $o->nama }} (Stok: {{ $o->stok }})</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Jumlah</label>
+                <input type="number" name="jumlah" class="form-control" min="1" required>
+            </div>
+            <button type="submit" class="btn btn-success">Bayar</button>
+            <a href="{{ route('transaksi.index') }}" class="btn btn-secondary ms-2">Batal</a>
+        </form>
+    </div>
+</div>
 @endsection

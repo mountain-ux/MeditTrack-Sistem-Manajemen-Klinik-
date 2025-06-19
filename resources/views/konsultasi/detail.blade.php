@@ -3,24 +3,63 @@
 @section('title', 'Detail Konsultasi')
 
 @section('content')
-<div class="container">
-    <h2>Detail Konsultasi</h2>
-    <p><strong>Dokter:</strong> {{ $konsultasi->dokter->nama }}</p>
-    <p><strong>Pasien:</strong> {{ $konsultasi->pasien->nama }}</p>
-    <p><strong>Tanggal:</strong> {{ $konsultasi->tanggal }}</p>
-    <p><strong>Status:</strong> {{ $konsultasi->status }}</p>
-    <p><strong>Keluhan:</strong> {{ $konsultasi->keluhan }}</p>
+<h2 class="mb-4 fw-semibold">Detail Konsultasi</h2>
 
-    @if(Auth::user()->peran === 'Dokter' && $konsultasi->status === 'Menunggu')
-        <form action="{{ route('konsultasi.update', $konsultasi->id) }}" method="POST">
-            @csrf
-            @method('PUT')
-            <div class="mb-3">
-                <label for="hasil_pemeriksaan" class="form-label">Hasil Pemeriksaan</label>
-                <textarea name="hasil_pemeriksaan" id="hasil_pemeriksaan" class="form-control"></textarea>
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        {{-- Informasi Konsultasi --}}
+        <div class="mb-3">
+            <label class="form-label fw-bold">Pasien:</label>
+            <p>{{ $konsultasi->pasien->nama ?? '-' }}</p>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Dokter:</label>
+            <p>{{ $konsultasi->dokter->nama ?? '-' }}</p>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Tanggal Konsultasi:</label>
+            <p>{{ \Carbon\Carbon::parse($konsultasi->tanggal_konsultasi)->translatedFormat('d F Y, H:i') }}</p>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Status:</label>
+            <p>
+                @switch($konsultasi->status)
+                    @case('Dijadwalkan') <span class="badge bg-warning text-dark">Dijadwalkan</span> @break
+                    @case('Dikonfirmasi') <span class="badge bg-info text-dark">Dikonfirmasi</span> @break
+                    @case('Selesai') <span class="badge bg-success">Selesai</span> @break
+                    @default <span class="badge bg-secondary">-</span>
+                @endswitch
+            </p>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Keluhan:</label>
+            <p>{{ $konsultasi->keluhan }}</p>
+        </div>
+
+        {{-- Tambahan: Diagnosa atau catatan dokter --}}
+        @if($konsultasi->status !== 'Selesai')
+            <hr>
+            <form action="{{ route('konsultasi.selesai', $konsultasi->id) }}" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <label for="catatan" class="form-label">Catatan Diagnosa</label>
+                    <textarea name="catatan" id="catatan" rows="4" class="form-control" required>{{ old('catatan') }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Tandai Selesai</button>
+            </form>
+        @elseif($konsultasi->catatan)
+            <div class="mt-4">
+                <label class="form-label fw-bold">Catatan Diagnosa:</label>
+                <div class="alert alert-secondary">{{ $konsultasi->catatan }}</div>
             </div>
-            <button type="submit" class="btn btn-primary">Simpan Hasil Konsultasi</button>
-        </form>
-    @endif
+        @endif
+
+        <a href="{{ route('konsultasi.index') }}" class="btn btn-secondary mt-3">Kembali</a>
+    </div>
 </div>
 @endsection

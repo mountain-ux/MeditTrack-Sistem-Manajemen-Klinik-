@@ -1,29 +1,48 @@
 @extends('layouts.app')
 
-@section('title', 'Buat Konsultasi')
+@section('title', 'Ajukan Konsultasi')
 
 @section('content')
-<div class="container">
-    <h2>Buat Jadwal Konsultasi</h2>
-    <form action="{{ route('konsultasi.store') }}" method="POST">
-        @csrf
-        <div class="mb-3">
-            <label for="dokter_id" class="form-label">Pilih Dokter</label>
-            <select name="dokter_id" id="dokter_id" class="form-select">
-                @foreach ($dokter as $d)
-                    <option value="{{ $d->id }}">{{ $d->nama }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="tanggal" class="form-label">Tanggal Konsultasi</label>
-            <input type="date" name="tanggal" id="tanggal" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label for="keluhan" class="form-label">Keluhan</label>
-            <textarea name="keluhan" id="keluhan" class="form-control" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-success">Buat Konsultasi</button>
-    </form>
+<h2 class="mb-4 fw-semibold">Ajukan Konsultasi</h2>
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form action="{{ route('konsultasi.store') }}" method="POST">
+            @csrf
+
+            <div class="mb-3">
+                <label class="form-label">Pilih Dokter</label>
+                <select name="id_dokter" class="form-select" required>
+                    <option value="">-- Pilih Dokter --</option>
+                    @foreach ($dokter as $d)
+                        <option value="{{ $d->id }}">{{ $d->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Tanggal & Waktu Konsultasi</label>
+                <input type="datetime-local" name="tanggal_konsultasi" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Keluhan</label>
+                <textarea name="keluhan" rows="4" class="form-control" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success">Ajukan</button>
+            <a href="{{ route('konsultasi.index') }}" class="btn btn-secondary ms-2">Batal</a>
+        </form>
+    </div>
 </div>
 @endsection

@@ -1,18 +1,29 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Resep Obat')
+@section('title', 'Edit Resep')
 
 @section('content')
-<div class="container">
-    <h2>Edit Resep Obat</h2>
-    <form action="{{ route('resep.update', $resep->id) }}" method="POST">
-        @csrf
-        @method('PUT')
-        <div class="mb-3">
-            <label for="detail_obat" class="form-label">Detail Obat</label>
-            <textarea name="detail_obat" id="detail_obat" class="form-control" required>{{ $resep->detail_obat }}</textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-    </form>
+<h2 class="mb-4 fw-semibold">Edit Resep</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form action="{{ route('resep.update', $resep->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div class="mb-3">
+                <label class="form-label">Jumlah</label>
+                <input type="number" name="jumlah" value="{{ $resep->jumlah }}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Keterangan</label>
+                <textarea name="keterangan" class="form-control" rows="3">{{ $resep->keterangan }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Perbarui</button>
+            <a href="{{ route('resep.index') }}" class="btn btn-secondary ms-2">Batal</a>
+        </form>
+    </div>
 </div>
 @endsection

@@ -1,32 +1,34 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Transaksi')
+@section('title', 'Riwayat Transaksi')
 
 @section('content')
-<div class="container">
-    <h2>Daftar Transaksi</h2>
+<h2 class="mb-4 fw-semibold">Riwayat Transaksi</h2>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Pasien</th>
-                <th>Obat</th>
-                <th>Jumlah</th>
-                <th>Total Harga</th>
-                <th>Tanggal</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($transaksi as $t)
-            <tr>
-                <td>{{ $t->pasien->nama }}</td>
-                <td>{{ $t->obat->nama }}</td>
-                <td>{{ $t->jumlah }}</td>
-                <td>Rp {{ number_format($t->total_harga, 0, ',', '.') }}</td>
-                <td>{{ $t->tanggal_transaksi }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+<div class="card shadow-sm">
+    <div class="card-body table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Obat</th>
+                    <th>Jumlah</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($transaksi as $t)
+                <tr>
+                    <td>{{ \Carbon\Carbon::parse($t->created_at)->translatedFormat('d M Y H:i') }}</td>
+                    <td>{{ $t->obat->nama ?? '-' }}</td>
+                    <td>{{ $t->jumlah }}</td>
+                    <td>Rp {{ number_format($t->total, 0, ',', '.') }}</td>
+                </tr>
+                @empty
+                <tr><td colspan="4" class="text-center">Belum ada transaksi.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
 @endsection

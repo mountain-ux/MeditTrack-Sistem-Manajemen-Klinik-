@@ -11,11 +11,10 @@ class KonsultasiController extends Controller
 {
     public function index()
     {
-        if (Auth::user()->peran === 'Dokter') {
-            $konsultasi = JadwalKonsultasi::where('id_dokter', Auth::id())->get();
-        } else {
-            $konsultasi = JadwalKonsultasi::where('id_pasien', Auth::id())->get();
-        }
+        $user = Auth::user();
+        $konsultasi = ($user->peran === 'Dokter')
+            ? JadwalKonsultasi::where('id_dokter', $user->id)->get()
+            : JadwalKonsultasi::where('id_pasien', $user->id)->get();
 
         return view('konsultasi.index', compact('konsultasi'));
     }
@@ -31,17 +30,18 @@ class KonsultasiController extends Controller
         $request->validate([
             'id_dokter' => 'required|exists:pengguna,id',
             'tanggal_konsultasi' => 'required|date',
-            'status' => 'required|string'
+            'keluhan' => 'required|string',
         ]);
 
         JadwalKonsultasi::create([
             'id_dokter' => $request->id_dokter,
             'id_pasien' => Auth::id(),
             'tanggal_konsultasi' => $request->tanggal_konsultasi,
+            'keluhan' => $request->keluhan,
             'status' => 'Menunggu'
         ]);
 
-        return redirect()->route('konsultasi.index')->with('success', 'Jadwal konsultasi berhasil dibuat!');
+        return redirect()->route('konsultasi.index')->with('success', 'Permintaan konsultasi berhasil diajukan.');
     }
 
     public function show($id)
@@ -52,16 +52,30 @@ class KonsultasiController extends Controller
 
     public function update(Request $request, $id)
     {
-        $konsultasi = JadwalKonsultasi::findOrFail($id);
-
         $request->validate([
-            'status' => 'required|string'
+            'status' => 'required|in:Menunggu,Dijadwalkan,Dikonfirmasi,Selesai,Batal'
         ]);
 
+        $konsultasi = JadwalKonsultasi::findOrFail($id);
         $konsultasi->update([
             'status' => $request->status
         ]);
 
-        return redirect()->route('konsultasi.index')->with('success', 'Status konsultasi berhasil diperbarui!');
+        return redirect()->route('konsultasi.index')->with('success', 'Status konsultasi diperbarui.');
+    }
+
+    public function selesaikan(Request $request, $id)
+    {
+        $request->validate([
+            'catatan' => 'required|string'
+        ]);
+
+        $konsultasi = JadwalKonsultasi::findOrFail($id);
+        $konsultasi->update([
+            'status' => 'Selesai',
+            'catatan' => $request->catatan
+        ]);
+
+        return redirect()->route('konsultasi.index')->with('success', 'Konsultasi ditandai sebagai selesai.');
     }
 }
