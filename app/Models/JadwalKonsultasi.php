@@ -10,22 +10,25 @@ class JadwalKonsultasi extends Model
     use HasFactory;
 
     protected $table = 'jadwal_konsultasi';
-    protected $fillable = [
-    'id_pasien',
-    'id_dokter',
-    'tanggal_konsultasi',
-    'status',
-    'keluhan',
-    'catatan'
-];
 
+    protected $fillable = [
+        'id_pasien',
+        'id_dokter',
+        'tanggal_konsultasi',
+        'status',
+        'keluhan',
+        'catatan'
+    ];
+
+    // Relasi ke model Dokter
     public function dokter()
     {
-        return $this->belongsTo(Pengguna::class, 'id_dokter');
+        return $this->belongsTo(\App\Models\Dokter::class, 'id_dokter');
     }
 
+    // Relasi ke model Pengguna sebagai Pasien
     public function pasien()
     {
-        return $this->belongsTo(Pengguna::class, 'id_pasien');
+        return $this->belongsTo(\App\Models\Pengguna::class, 'id_pasien');
     }
 }

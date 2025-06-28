@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Pengguna;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Pengguna;
+use App\Models\Pasien;
 
 class AuthController extends Controller
 {
@@ -40,21 +41,36 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:pengguna',
-            'password' => 'required|min:6'
+            'nama'           => 'required|string|max:255',
+            'email'          => 'required|email|unique:pengguna,email',
+            'password'       => 'required|string|min:6|confirmed',
+            'tanggal_lahir'  => 'required|date',
+            'jenis_kelamin'  => 'required|string',
+            'telepon'        => 'required|string|max:20',
+            'alamat'         => 'required|string|max:255',
+            'riwayat_medis'  => 'nullable|string'
         ]);
 
-        Pengguna::create([
-            'nama' => $request->nama,
-            'email' => $request->email,
+        // Simpan ke tabel pengguna
+        $user = Pengguna::create([
+            'nama'     => $request->nama,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'peran' => 'Pasien'
+            'peran'    => 'Pasien'
+        ]);
+
+        // Simpan ke tabel pasien
+        Pasien::create([
+            'id_pengguna'   => $user->id,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'telepon'       => $request->telepon,
+            'alamat'        => $request->alamat,
+            'riwayat_medis' => $request->riwayat_medis
         ]);
 
         return redirect()->route('auth.login')->with('success', 'Registrasi berhasil! Silakan login.');
     }
-
 
     // Logout
     public function logout()

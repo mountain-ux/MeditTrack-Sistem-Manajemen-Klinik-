@@ -9,7 +9,11 @@
     <div class="card-body">
         @if ($errors->any())
             <div class="alert alert-danger">
-                <ul class="mb-0">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
 
@@ -19,28 +23,20 @@
             {{-- Jadwal Konsultasi --}}
             <div class="mb-3">
                 <label class="form-label">Jadwal Konsultasi</label>
-                <select name="id_jadwal_konsultasi" class="form-select" required>
+                <select name="id_jadwal_konsultasi" class="form-select" onchange="autofillPasien(this)" required>
                     <option value="">-- Pilih Jadwal --</option>
                     @foreach ($jadwal as $j)
-                        <option value="{{ $j->id }}">
+                        <option value="{{ $j->id }}" data-pasien="{{ $j->id_pasien }}">
                             {{ $j->pasien->nama ?? 'Pasien' }} - {{ \Carbon\Carbon::parse($j->tanggal_konsultasi)->translatedFormat('d F Y H:i') }}
                         </option>
                     @endforeach
                 </select>
             </div>
 
-            {{-- Pilih Pasien --}}
-            <div class="mb-3">
-                <label class="form-label">Pasien</label>
-                <select name="id_pasien" class="form-select" required>
-                    <option value="">-- Pilih Pasien --</option>
-                    @foreach ($pasien as $p)
-                        <option value="{{ $p->id }}">{{ $p->nama }}</option>
-                    @endforeach
-                </select>
-            </div>
+            {{-- Hidden input untuk id_pasien --}}
+            <input type="hidden" name="id_pasien" id="id_pasien" value="">
 
-            {{-- Pilih Obat --}}
+            {{-- Obat --}}
             <div class="mb-3">
                 <label class="form-label">Obat</label>
                 <select name="detail_obat" class="form-select" required>
@@ -57,3 +53,12 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    function autofillPasien(select) {
+        const pasienId = select.options[select.selectedIndex].getAttribute('data-pasien');
+        document.getElementById('id_pasien').value = pasienId;
+    }
+</script>
+@endpush

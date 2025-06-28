@@ -26,11 +26,15 @@ class ResepController extends Controller
     // Menampilkan form tambah resep obat (hanya dokter)
     public function create()
     {
-        $pasien = Pengguna::where('peran', 'Pasien')->get();
-        $jadwal = JadwalKonsultasi::where('id_dokter', Auth::id())->where('status', 'Selesai')->get();
+        // Ambil data dokter yang sedang login
+        $dokter = \App\Models\Dokter::where('id_pengguna', Auth::id())->first();
+
+        // Ambil jadwal konsultasi berdasarkan id dokter dari tabel 'dokter'
+        $jadwal = JadwalKonsultasi::with('pasien')->where('id_dokter', $dokter->id)->where('status', 'Selesai')->get();
+
         $obat = Obat::all();
 
-        return view('resep.create', compact('pasien', 'jadwal','obat'));
+        return view('resep.create', compact('jadwal', 'obat'));
     }
 
     // Menyimpan resep obat baru
@@ -38,15 +42,16 @@ class ResepController extends Controller
     {
         $request->validate([
             'id_jadwal_konsultasi' => 'required|exists:jadwal_konsultasi,id',
-            'id_pasien' => 'required|exists:pengguna,id',
-            'detail_obat' => 'required|string'
+            'detail_obat' => 'required|string',
         ]);
 
+        $jadwal = JadwalKonsultasi::findOrFail($request->id_jadwal_konsultasi);
+
         ResepObat::create([
-            'id_jadwal_konsultasi' => $request->id_jadwal_konsultasi,
-            'id_dokter' => Auth::id(),
-            'id_pasien' => $request->id_pasien,
-            'detail_obat' => $request->detail_obat
+            'id_jadwal_konsultasi' => $jadwal->id,
+            'id_dokter' => $jadwal->id_dokter,
+            'id_pasien' => $jadwal->id_pasien,
+            'detail_obat' => $request->detail_obat,
         ]);
 
         return redirect()->route('resep.index')->with('success', 'Resep berhasil ditambahkan!');
@@ -64,7 +69,7 @@ class ResepController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'detail_obat' => 'required|string'
+            'detail_obat' => 'required|string',
         ]);
 
         $resep = ResepObat::findOrFail($id);

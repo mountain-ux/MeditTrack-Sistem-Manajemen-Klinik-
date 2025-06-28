@@ -25,7 +25,7 @@
                 <select name="id_dokter" class="form-select" required>
                     <option value="">-- Pilih Dokter --</option>
                     @foreach ($dokter as $d)
-                        <option value="{{ $d->id }}">{{ $d->nama }}</option>
+                        <option value="{{ $d->id }}">{{ $d->pengguna->nama }}</option>
                     @endforeach
                 </select>
             </div>

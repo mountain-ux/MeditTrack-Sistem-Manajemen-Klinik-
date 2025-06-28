@@ -38,8 +38,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Tambah konsultasi – hanya untuk Pasien
     Route::middleware('role:Pasien')->group(function () {
-        Route::get('/konsultasi/create', [KonsultasiController::class, 'create'])->name('konsultasi.create');
-        R oute::post('/konsultasi', [KonsultasiController::class, 'store'])->name('konsultasi.store');
+        Route::get('/konsultasi/create/w', [KonsultasiController::class, 'create'])->name('konsultasi.create');
+        Route::post('/konsultasi', [KonsultasiController::class, 'store'])->name('konsultasi.store');
     });
 
     // Update status konsultasi – hanya untuk Dokter
@@ -56,6 +56,7 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
 
 // Resep (Dokter Only)
 Route::middleware(['auth', 'role:Dokter'])->group(function () {
+    Route::put('/konsultasi/{id}', [KonsultasiController::class, 'update'])->name('konsultasi.update');
     Route::resource('resep', ResepController::class)->except(['show', 'destroy']);
 });
 

@@ -6,19 +6,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Pengguna;
+use App\Models\Dokter;
 use App\Models\JadwalKonsultasi;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $pengguna = Auth::user();
+        $user = Auth::user();
+        $dokter = Dokter::where('id_pengguna', $user->id)->first();
 
-        return match ($pengguna->peran) {
-            'Admin' => $this->admin(),
-            'Dokter' => $this->dokter(),
-            default => $this->pasien(),
-        };
+        $jadwalKonsultasi = JadwalKonsultasi::with('pasien')->where('id_dokter', $dokter->id)->orderBy('tanggal_konsultasi', 'desc')->get();
+
+        return view('dashboard.dokter', compact('jadwalKonsultasi'));
     }
 
     // === Admin Dashboard ===
@@ -36,15 +36,27 @@ class DashboardController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:pengguna',
-            'password' => 'required|min:6',
+            'email' => 'required|email|unique:pengguna,email',
+            'password' => 'required|string|min:6',
+            'spesialisasi' => 'required|string|max:255',
+            'telepon' => 'required|string|max:20',
+            'jadwal_praktik' => 'required|string|max:255',
         ]);
 
-        Pengguna::create([
+        // Simpan ke pengguna
+        $user = Pengguna::create([
             'nama' => $request->nama,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'peran' => 'Dokter',
+        ]);
+
+        // Simpan ke dokter
+        Dokter::create([
+            'id_pengguna' => $user->id,
+            'spesialisasi' => $request->spesialisasi,
+            'telepon' => $request->telepon,
+            'jadwal_praktik' => $request->jadwal_praktik,
         ]);
 
         return redirect()->route('dashboard.admin')->with('success', 'Dokter berhasil ditambahkan!');
@@ -53,6 +65,10 @@ class DashboardController extends Controller
     public function destroyDokter($id)
     {
         $dokter = Pengguna::findOrFail($id);
+
+        // Hapus data dari tabel dokter jika ada
+        Dokter::where('id_pengguna', $dokter->id)->delete();
+
         $dokter->delete();
 
         return redirect()->route('dashboard.admin')->with('success', 'Dokter berhasil dihapus!');
@@ -63,10 +79,7 @@ class DashboardController extends Controller
     {
         $dokterId = Auth::id();
 
-        $jadwalKonsultasi = JadwalKonsultasi::with('pasien') // relasi pasien harus ada
-            ->where('id_dokter', $dokterId)
-            ->orderBy('tanggal_konsultasi', 'desc')
-            ->get();
+        $jadwalKonsultasi = JadwalKonsultasi::with('pasien')->where('id_dokter', $dokterId)->orderBy('tanggal_konsultasi', 'desc')->get();
 
         return view('dashboard.dokter', compact('jadwalKonsultasi'));
     }
@@ -76,10 +89,7 @@ class DashboardController extends Controller
     {
         $pasienId = Auth::id();
 
-        $konsultasi = JadwalKonsultasi::with('dokter')
-            ->where('id_pasien', $pasienId)
-            ->orderBy('tanggal_konsultasi', 'desc')
-            ->get();
+        $konsultasi = JadwalKonsultasi::with('dokter')->where('id_pasien', $pasienId)->orderBy('tanggal_konsultasi', 'desc')->get();
 
         return view('dashboard.pasien', compact('konsultasi'));
     }

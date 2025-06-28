@@ -55,16 +55,28 @@
             @csrf
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label for="nama" class="form-label">Nama Lengkap</label>
-                    <input type="text" name="nama" id="nama" class="form-control" value="{{ old('nama') }}" required>
+                    <label class="form-label">Nama Lengkap</label>
+                    <input type="text" name="nama" class="form-control" value="{{ old('nama') }}" required>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" name="password" id="password" class="form-control" required>
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Spesialisasi</label>
+                    <input type="text" name="spesialisasi" class="form-control" value="{{ old('spesialisasi') }}" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">No. Telepon</label>
+                    <input type="text" name="telepon" class="form-control" value="{{ old('telepon') }}" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Jadwal Praktik</label>
+                    <input type="text" name="jadwal_praktik" class="form-control" value="{{ old('jadwal_praktik') }}" required>
                 </div>
             </div>
             <button type="submit" class="btn btn-success">Simpan</button>

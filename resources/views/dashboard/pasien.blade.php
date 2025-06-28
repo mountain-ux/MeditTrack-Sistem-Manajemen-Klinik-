@@ -7,9 +7,8 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Riwayat Konsultasi</h5>
-        @if (Auth::user()->peran === 'Pasien')
-            <a href="{{ route('konsultasi.create') }}" class="btn btn-sm btn-success">Ajukan Konsultasi</a>
-        @endif
+
+        <a href="{{ route('konsultasi.create') }}" class="btn btn-sm btn-success">Ajukan Konsultasi</a>
 
     </div>
 
