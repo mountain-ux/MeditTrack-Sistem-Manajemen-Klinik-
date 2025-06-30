@@ -5,7 +5,11 @@
 @section('content')
 <h2 class="mb-4 fw-semibold">Data Resep Obat</h2>
 
+@auth
+    @if (Auth::user()->peran === 'Dokter')
 <a href="{{ route('resep.create') }}" class="btn btn-success mb-3">+ Buat Resep</a>
+  @endif
+@endauth
 
 <div class="card shadow-sm">
     <div class="card-body table-responsive">
@@ -14,18 +18,16 @@
                 <tr>
                     <th>Pasien</th>
                     <th>Obat</th>
-                    <th>Jumlah</th>
-                    <th>Keterangan</th>
+                   
                     <th style="width: 120px;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($resep as $item)
                 <tr>
-                    <td>{{ $item->pasien->nama ?? '-' }}</td>
-                    <td>{{ $item->obat->nama ?? '-' }}</td>
-                    <td>{{ $item->jumlah }}</td>
-                    <td>{{ $item->keterangan }}</td>
+                    <td>{{ $item->jadwalKonsultasi->pasien->pengguna->nama ?? '-' }}</td>
+                    <td>{{ $item->detail_obat }}</td>
+                    
                     <td>
                         <a href="{{ route('resep.edit', $item->id) }}" class="btn btn-sm btn-warning">Edit</a>
                     </td>

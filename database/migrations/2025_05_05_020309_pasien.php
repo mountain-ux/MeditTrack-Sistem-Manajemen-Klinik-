@@ -12,12 +12,12 @@ return new class extends Migration {
     {
         Schema::create('pasien', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_pengguna')->constrained('pengguna');
+            $table->foreignId('id_pengguna')->constrained('pengguna')->onDelete('cascade'); 
             $table->date('tanggal_lahir');
             $table->string('jenis_kelamin');
             $table->string('telepon');
             $table->text('alamat');
-            $table->text('riwayat_medis'); 
+            $table->text('riwayat_medis');
             $table->timestamps();
         });
     }

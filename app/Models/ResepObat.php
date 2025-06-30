@@ -10,12 +10,7 @@ class ResepObat extends Model
     use HasFactory;
 
     protected $table = 'resep_obat';
-    protected $fillable = [
-        'id_jadwal_konsultasi',
-        'id_dokter',
-        'id_pasien',
-        'detail_obat'
-    ];
+    protected $fillable = ['id_jadwal_konsultasi', 'id_dokter', 'id_pasien', 'detail_obat', 'id_obat'];
 
     // Relasi ke jadwal konsultasi
     public function jadwalKonsultasi()
@@ -35,4 +30,8 @@ class ResepObat extends Model
         return $this->belongsTo(Pasien::class, 'id_pasien');
     }
 
+    public function obat()
+    {
+        return $this->belongsTo(Obat::class, 'id_obat'); // Pastikan field `id_obat` ada di tabel resep_obat
+    }
 }

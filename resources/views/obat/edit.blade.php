@@ -28,14 +28,6 @@
                 <label class="form-label">Deskripsi</label>
                 <textarea name="deskripsi" class="form-control" rows="3" required>{{ $obat->deskripsi }}</textarea>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Stok</label>
-                <input type="number" name="stok" class="form-control" value="{{ $obat->stok }}" min="0" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Harga</label>
-                <input type="number" name="harga" class="form-control" value="{{ $obat->harga }}" min="0" required>
-            </div>
             <button type="submit" class="btn btn-primary">Perbarui</button>
             <a href="{{ route('obat.index') }}" class="btn btn-secondary ms-2">Batal</a>
         </form>

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Pengguna;
 use App\Models\Dokter;
+use App\Models\Pasien;
 use App\Models\JadwalKonsultasi;
 
 class DashboardController extends Controller
@@ -14,11 +15,22 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $dokter = Dokter::where('id_pengguna', $user->id)->first();
 
-        $jadwalKonsultasi = JadwalKonsultasi::with('pasien')->where('id_dokter', $dokter->id)->orderBy('tanggal_konsultasi', 'desc')->get();
+        if (!$user) {
+            return redirect()->route('auth.login')->withErrors('Anda harus login terlebih dahulu.');
+        }
 
-        return view('dashboard.dokter', compact('jadwalKonsultasi'));
+        switch ($user->peran) {
+            case 'Admin':
+                return $this->admin();
+            case 'Dokter':
+                return $this->dokter();
+            case 'Pasien':
+                return $this->pasien();
+            default:
+                Auth::logout();
+                return redirect()->route('auth.login')->withErrors('Peran tidak dikenali.');
+        }
     }
 
     // === Admin Dashboard ===
@@ -77,20 +89,34 @@ class DashboardController extends Controller
     // === Dokter Dashboard ===
     public function dokter()
     {
-        $dokterId = Auth::id();
+        $user = Auth::user();
 
-        $jadwalKonsultasi = JadwalKonsultasi::with('pasien')->where('id_dokter', $dokterId)->orderBy('tanggal_konsultasi', 'desc')->get();
+        $dokter = \App\Models\Dokter::where('id_pengguna', $user->id)->first();
 
-        return view('dashboard.dokter', compact('jadwalKonsultasi'));
+        $konsultasi = JadwalKonsultasi::with(['pasien'])
+            ->where('id_dokter', $dokter->id)
+            ->orderByDesc('tanggal_konsultasi')
+            ->get();
+        // $dokterId = Auth::id();
+
+        // $jadwalKonsultasi = JadwalKonsultasi::with('pasien')->where('id_dokter', $dokterId)->orderBy('tanggal_konsultasi', 'desc')->get();
+
+        return view('dashboard.dokter', compact('konsultasi'));
     }
 
     // === Pasien Dashboard ===
     public function pasien()
     {
-        $pasienId = Auth::id();
+        $user = Auth::user();
 
-        $konsultasi = JadwalKonsultasi::with('dokter')->where('id_pasien', $pasienId)->orderBy('tanggal_konsultasi', 'desc')->get();
+        // $konsultasi = JadwalKonsultasi::with('dokter')->where('id_pasien', $pasienId)->orderBy('tanggal_konsultasi', 'desc')->get();
 
+        $pasien = Pasien::where('id_pengguna', $user->id)->first();
+        // $konsultasi = JadwalKonsultasi::with(['pasien.pengguna', 'dokter.pengguna'])
+        $konsultasi = JadwalKonsultasi::with(['pasien.pengguna:id,nama', 'dokter.pengguna:id,nama'])
+            ->where('id_pasien', $pasien->id)
+            ->orderByDesc('tanggal_konsultasi')
+            ->get();
         return view('dashboard.pasien', compact('konsultasi'));
     }
 }

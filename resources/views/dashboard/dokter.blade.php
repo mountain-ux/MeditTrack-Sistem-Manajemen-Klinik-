@@ -7,7 +7,7 @@
 
 <h5 class="mb-3">Jadwal Konsultasi</h5>
 
-@if($jadwalKonsultasi->count())
+@if($konsultasi->count())
 <div class="card shadow-sm">
     <div class="card-body table-responsive">
         <table class="table table-bordered table-hover align-middle">
@@ -20,9 +20,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($jadwalKonsultasi as $konsultasi)
+                @foreach ($konsultasi as $konsultasi)
                 <tr>
-                    <td>{{ $konsultasi->pasien->nama ?? 'N/A' }}</td>
+                    <td>{{ $konsultasi->pasien->pengguna->nama ?? 'N/A' }}</td>
                     <td>{{ \Carbon\Carbon::parse($konsultasi->tanggal_konsultasi)->translatedFormat('d F Y, H:i') }}</td>
                     <td>
                         @switch($konsultasi->status)

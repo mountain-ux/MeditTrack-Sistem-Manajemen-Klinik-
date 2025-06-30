@@ -40,7 +40,7 @@
                 <textarea name="keluhan" rows="4" class="form-control" required></textarea>
             </div>
 
-            <button type="submit" class="btn btn-success">Ajukan</button>
+            <button type="submit" class="btn btn-success">Ajuka</button>
             <a href="{{ route('konsultasi.index') }}" class="btn btn-secondary ms-2">Batal</a>
         </form>
     </div>

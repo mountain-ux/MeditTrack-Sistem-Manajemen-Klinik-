@@ -26,8 +26,6 @@ class ObatController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'stok' => 'required|integer|min:1',
-            'harga' => 'required|numeric|min:1000'
         ]);
 
         Obat::create($request->all());
@@ -48,8 +46,6 @@ class ObatController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'stok' => 'required|integer|min:1',
-            'harga' => 'required|numeric|min:1000'
         ]);
 
         $obat = Obat::findOrFail($id);

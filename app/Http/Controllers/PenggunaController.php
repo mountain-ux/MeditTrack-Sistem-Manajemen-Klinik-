@@ -25,17 +25,18 @@ class PenggunaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:pengguna',
-            'password' => 'required|min:6'
-        ]);
+        'nama' => 'required|string|max:255',
+        'email' => 'required|email|unique:pengguna',
+        'password' => 'required|min:6',
+        'peran' => 'required|in:admin,dokter',
+    ]);
 
-        Pengguna::create([
-            'nama' => $request->nama,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'peran' => 'Dokter' // Dokter hanya bisa dibuat oleh admin
-        ]);
+    Pengguna::create([
+        'nama' => $request->nama,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'peran' => $request->peran,
+    ]);
 
         return redirect()->route('pengguna.index')->with('success', 'Dokter berhasil ditambahkan!');
     }
@@ -54,12 +55,12 @@ class PenggunaController extends Controller
 
         $request->validate([
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:pengguna,email,' . $id
+            'email' => 'required|email|unique:pengguna,email,' . $id,
         ]);
 
         $pengguna->update([
             'nama' => $request->nama,
-            'email' => $request->email
+            'email' => $request->email,
         ]);
 
         return redirect()->route('pengguna.index')->with('success', 'Data pengguna berhasil diperbarui!');

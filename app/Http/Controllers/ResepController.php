@@ -12,16 +12,36 @@ use Illuminate\Support\Facades\Auth;
 class ResepController extends Controller
 {
     // Menampilkan daftar resep obat berdasarkan pasien dan dokter
-    public function index()
-    {
-        if (Auth::user()->peran === 'Dokter') {
-            $resep = ResepObat::where('id_dokter', Auth::id())->get();
-        } else {
-            $resep = ResepObat::where('id_pasien', Auth::id())->get();
+   public function index()
+{
+    $query = ResepObat::with('jadwalKonsultasi.pasien.pengguna', 'obat');
+
+    if (Auth::user()->peran === 'Dokter') {
+        $dokter = \App\Models\Dokter::where('id_pengguna', Auth::id())->first();
+
+        if (!$dokter) {
+            return redirect()->back()->with('error', 'Data dokter tidak ditemukan.');
         }
 
-        return view('resep.index', compact('resep'));
+        $resep = $query->where('id_dokter', $dokter->id)->get();
+    } elseif (Auth::user()->peran === 'Pasien') {
+        $pasien = \App\Models\Pasien::where('id_pengguna', Auth::id())->first();
+
+        if (!$pasien) {
+            return redirect()->back()->with('error', 'Data pasien tidak ditemukan.');
+        }
+
+        $resep = $query->where('id_pasien', $pasien->id)->get();
+    } else {
+        // Untuk admin atau peran lain, tampilkan semua resep
+        $resep = $query->get();
     }
+
+
+
+    return view('resep.index', compact('resep'));
+}
+
 
     // Menampilkan form tambah resep obat (hanya dokter)
     public function create()

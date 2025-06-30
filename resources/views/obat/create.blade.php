@@ -27,14 +27,6 @@
                 <label class="form-label">Deskripsi</label>
                 <textarea name="deskripsi" class="form-control" rows="3" required></textarea>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Stok</label>
-                <input type="number" name="stok" class="form-control" min="0" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Harga</label>
-                <input type="number" name="harga" class="form-control" min="0" required>
-            </div>
             <button type="submit" class="btn btn-success">Simpan</button>
             <a href="{{ route('obat.index') }}" class="btn btn-secondary ms-2">Batal</a>
         </form>

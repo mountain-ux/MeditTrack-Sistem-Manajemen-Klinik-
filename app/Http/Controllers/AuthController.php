@@ -18,18 +18,31 @@ class AuthController extends Controller
 
     // Proses login
     public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
-            return redirect()->route('dashboard');
+    if (Auth::attempt($request->only('email', 'password'))) {
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+        switch ($user->peran) {
+            case 'Admin':
+                return redirect()->route('dashboard.admin');
+            case 'Dokter':
+                return redirect()->route('dashboard.dokter');
+            case 'Pasien':
+                return redirect()->route('dashboard.pasien');
+            default:
+                Auth::logout();
+                return redirect()->route('auth.login')->withErrors('Peran tidak dikenali.');
         }
-
-        return back()->withErrors(['email' => 'Email atau password salah']);
     }
+
+    return back()->withErrors(['email' => 'Email atau password salah']);
+}
 
     // Menampilkan halaman registrasi
     public function showRegister()

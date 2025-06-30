@@ -35,11 +35,10 @@
                 <label class="form-label">Peran</label>
                 <select name="peran" class="form-select" required>
                     <option value="">-- Pilih Peran --</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Dokter">Dokter</option>
-                    <option value="Pasien">Pasien</option>
+                    <option value="admin">Admin</option>
+                    <option value="dokter">Dokter</option>
                 </select>
-            </div>
+        </div>
             <button type="submit" class="btn btn-success">Simpan</button>
             <a href="{{ route('pengguna.index') }}" class="btn btn-secondary ms-2">Batal</a>
         </form>

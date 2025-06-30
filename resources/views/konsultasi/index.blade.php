@@ -24,7 +24,7 @@
             <tbody>
                 @forelse ($konsultasi as $item)
                 <tr>
-                    <td>{{ $item->pasien->nama ?? '-' }}</td>
+                    <td>{{ $item->pasien->pengguna->nama ?? '-' }}</td>
                     <td>{{ $item->dokter->pengguna->nama ?? '-' }}</td>
                     <td>{{ \Carbon\Carbon::parse($item->tanggal_konsultasi)->translatedFormat('d F Y, H:i') }}</td>
                     <td>

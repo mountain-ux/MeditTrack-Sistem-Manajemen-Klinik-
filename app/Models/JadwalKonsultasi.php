@@ -11,14 +11,7 @@ class JadwalKonsultasi extends Model
 
     protected $table = 'jadwal_konsultasi';
 
-    protected $fillable = [
-        'id_pasien',
-        'id_dokter',
-        'tanggal_konsultasi',
-        'status',
-        'keluhan',
-        'catatan'
-    ];
+    protected $fillable = ['id_pasien', 'id_dokter', 'tanggal_konsultasi', 'status', 'keluhan', 'catatan'];
 
     // Relasi ke model Dokter
     public function dokter()
@@ -29,6 +22,6 @@ class JadwalKonsultasi extends Model
     // Relasi ke model Pengguna sebagai Pasien
     public function pasien()
     {
-        return $this->belongsTo(\App\Models\Pengguna::class, 'id_pasien');
+        return $this->belongsTo(\App\Models\Pasien::class, 'id_pasien');
     }
 }

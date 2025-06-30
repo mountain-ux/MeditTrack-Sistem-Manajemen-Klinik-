@@ -14,8 +14,6 @@ class Obat extends Model
     protected $fillable = [
         'nama',
         'deskripsi',
-        'stok',
-        'harga'
     ];
 
     // Relasi ke transaksi

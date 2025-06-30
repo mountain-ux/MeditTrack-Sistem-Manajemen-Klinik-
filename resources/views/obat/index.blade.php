@@ -5,6 +5,7 @@
 @section('content')
 <h2 class="mb-4 fw-semibold">Data Obat</h2>
 
+
 <a href="{{ route('obat.create') }}" class="btn btn-success mb-3">+ Tambah Obat</a>
 
 <div class="card shadow-sm">
@@ -14,8 +15,6 @@
                 <tr>
                     <th>Nama Obat</th>
                     <th>Deskripsi</th>
-                    <th>Stok</th>
-                    <th>Harga</th>
                     <th style="width: 120px;">Aksi</th>
                 </tr>
             </thead>
@@ -24,8 +23,6 @@
                 <tr>
                     <td>{{ $item->nama }}</td>
                     <td>{{ $item->deskripsi }}</td>
-                    <td>{{ $item->stok }}</td>
-                    <td>Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
                     <td>
                         <a href="{{ route('obat.edit', $item->id) }}" class="btn btn-sm btn-warning">Edit</a>
                         <form action="{{ route('obat.destroy', $item->id) }}" method="POST" class="d-inline">

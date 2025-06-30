@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\JadwalKonsultasi;
 use App\Models\Dokter;
+use App\Models\Pasien;
 
 class KonsultasiController extends Controller
 {
@@ -22,18 +23,20 @@ class KonsultasiController extends Controller
                 ->orderByDesc('tanggal_konsultasi')
                 ->get();
         } else {
-            $konsultasi = JadwalKonsultasi::with(['dokter.pengguna'])
-                ->where('id_pasien', $user->id)
+            $pasien = Pasien::where('id_pengguna', $user->id)->first();
+            // $konsultasi = JadwalKonsultasi::with(['pasien.pengguna', 'dokter.pengguna'])
+            $konsultasi = JadwalKonsultasi::with(['pasien.pengguna:id,nama', 'dokter.pengguna:id,nama'])
+                ->where('id_pasien', $pasien->id)
                 ->orderByDesc('tanggal_konsultasi')
                 ->get();
         }
 
         return view('konsultasi.index', compact('konsultasi'));
     }
-
     // Form ajukan konsultasi (Pasien)
-    public function create()
+    public function create(Request $request)
     {
+        // dd(Auth::user(), $request->all());
         $dokter = Dokter::with('pengguna')->get();
         return view('konsultasi.create', compact('dokter'));
     }
@@ -42,21 +45,27 @@ class KonsultasiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_dokter' => 'required|exists:pengguna,id',
+            'id_dokter' => 'required|exists:dokter,id',
             'tanggal_konsultasi' => 'required|date',
             'keluhan' => 'required|string',
         ]);
 
-        $dokter = \App\Models\Dokter::where('id_pengguna', $request->id_dokter)->firstOrFail();
+        // dd($request->all());
+        // $dokter = \App\Models\Dokter::where('id_pengguna', $request->id_dokter)->firstOrFail();
+        // dd($dokter);
+        // $dokter = \App\Models\Dokter::where('id_pengguna', $request->id_dokter)->first();
+        // dd($dokter);
+        $dokter = Dokter::findOrFail($request->id_dokter);
+        $pasien = Pasien::where('id_pengguna', Auth::id())->firstOrFail();
+
         JadwalKonsultasi::create([
             'id_dokter' => $dokter->id,
-            'id_pasien' => Auth::id(),
+            'id_pasien' => $pasien->id,
             'tanggal_konsultasi' => $request->tanggal_konsultasi,
             'keluhan' => $request->keluhan,
             'status' => 'Menunggu',
         ]);
-
-        return redirect()->route('konsultasi.index')->with('success', 'Permintaan konsultasi berhasil diajukan.');
+        return redirect()->route('konsultasi.index');
     }
 
     // Detail konsultasi

@@ -28,10 +28,10 @@
 
                     {{-- Pasien --}}
                     @if($user->peran === 'Pasien')
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{ route('transaksi.index') }}">
-                            <i class="ti ti-credit-card"></i>
-                            <span class="hide-menu">Transaksi</span>
+                     <li class="sidebar-item">
+                        <a class="sidebar-link" href="{{ route('resep.index') }}">
+                            <i class="ti ti-file-description"></i>
+                            <span class="hide-menu">Data Resep</span>
                         </a>
                     </li>
                     @endif
